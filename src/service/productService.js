@@ -1,10 +1,16 @@
 const supabase = require('../config/supabase')
 
 // OBTENER TODOS LOS PRODUCTOS
-const getProducts = async () => {
-    const { data, error } = await supabase
+const getProducts = async (categoryId = null) => {
+    let query = supabase
         .from('productos')
         .select('id, created_at, nombre, precio, imagen_url, descripcion, categoria:categorias(*)')
+    
+    if (categoryId) {
+        query = query.eq('id_categoria', categoryId)
+    }
+    
+    const { data, error } = await query
     if (error) {
         throw new Error(error.message)
     }
@@ -25,5 +31,6 @@ const getProductById = async (id) => {
 }
 
 module.exports = {
-    getProducts
+    getProducts,
+    getProductById
 }

@@ -9,5 +9,6 @@ app.use(helmet())
 app.use(express.json())
 
 app.use('/products', require('./routes/products'))
+app.use('/categories', require('./routes/categories'))
 
 module.exports = app;
