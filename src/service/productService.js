@@ -28,7 +28,7 @@ const getProductById = async (id) => {
     
 
     if (!data) {
-        throw new Error('Producto no encontrado')
+        throw new Error('Producto not found')
     }
 
     if (error) {
@@ -64,9 +64,7 @@ const deleteProduct = async (id) => {
     }
 
     if (!data) {
-        const notFound = new Error('Producto not found');
-        notFound.statusCode = 404;
-        throw notFound
+        throw new Error('Producto not found')
     }
 }
 
