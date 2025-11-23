@@ -18,6 +18,11 @@ const getDetalleCompraById = async (id) => {
         .select('id, created_at, cantidad, precio_unitario, usuario:usuario_id(*), producto:producto_id(id, created_at, nombre, precio, imagen_url, descripcion, categoria:categorias(*))')
         .eq('id', id)
         .single()
+
+    if (!data) {
+        throw new Error('Detalle de compra not found')
+    }
+
     if (error) {
         throw new Error(error.message)
     }

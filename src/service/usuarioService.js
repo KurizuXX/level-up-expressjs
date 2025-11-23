@@ -18,6 +18,11 @@ const getUsuarioById = async (id) => {
         .select('*')
         .eq('id', id)
         .single()
+
+    if (!data) {  
+        throw new Error('Usuario not found')
+    }
+
     if (error) {
         throw new Error(error.message)
     }

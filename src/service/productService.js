@@ -1,10 +1,11 @@
-import supabase from '../config/supabase.js'
+const supabase = require('../config/supabase')
+
 
 // OBTENER TODOS LOS PRODUCTOS
 const getProducts = async (categoryId = null) => {
     let query = supabase
         .from('productos')
-        .select('id, created_at, nombre, precio, imagen_url, descripcion, categoria:categorias(*)')
+        .select('id, created_at, nombre, precio, imagen_url, descripcion, stock, categoria:id_categoria(*)')
     
     if (categoryId) {
         query = query.eq('id_categoria', categoryId)
@@ -21,12 +22,19 @@ const getProducts = async (categoryId = null) => {
 const getProductById = async (id) => {
     const { data, error } = await supabase
         .from('productos')
-        .select('id, created_at, nombre, precio, imagen_url, descripcion, categoria:categorias(*)')
+        .select('id, created_at, nombre, precio, imagen_url, descripcion, stock, categoria:id_categoria(*)')
         .eq('id', id)
         .single()
+    
+
+    if (!data) {
+        throw new Error('Producto no encontrado')
+    }
+
     if (error) {
         throw new Error(error.message)
     }
+    
     return data
 }
 
@@ -40,7 +48,7 @@ const createProduct = async (productData) => {
 
     if (error) throw new Error(error.message);
     return data;
-};
+}
 
 // ELIMINAR PRODUCTO
 const deleteProduct = async (id) => {
@@ -48,13 +56,21 @@ const deleteProduct = async (id) => {
         .from('productos')
         .delete()
         .eq('id', id)
+        .select('id')
+        .maybeSingle()
+
     if (error) {
-        throw new Error(error.message)
+        throw new Error(error.message);
     }
-    return data
+
+    if (!data) {
+        const notFound = new Error('Producto not found');
+        notFound.statusCode = 404;
+        throw notFound
+    }
 }
 
-export default {
+module.exports = {
     getProducts,
     getProductById,
     createProduct,

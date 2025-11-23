@@ -1,16 +1,10 @@
 const express = require('express');
-const cors = require('cors');
 const helmet = require("helmet")
+const corsMiddleware = require('./middleware/corsMiddleware')
 
 const app = express();
 
-const corsOptions = {
-    origin: 'http://localhost:5173',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true
-};
-
-app.use(cors(corsOptions))
+app.use(corsMiddleware)
 app.use(helmet())
 app.use(express.json())
 
@@ -18,5 +12,7 @@ app.use('/api/productos', require('./routes/products'))
 app.use('/api/categorias', require('./routes/categories'))
 app.use('/api/detalles-compra', require('./routes/detallesCompra'))
 app.use('/api/usuarios', require('./routes/usuarios'))
+
+app.use(require('./middleware/errorHandler'))
 
 module.exports = app;
