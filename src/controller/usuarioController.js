@@ -1,25 +1,31 @@
-const usuarioService = require('../service/usuarioService')
+const usuarioService = require('../service/usuarioService');
 
-const getUsuarios = async (req, res) => {
-    try {
-        const usuarios = await usuarioService.getUsuarios()
-        res.status(200).json(usuarios)
-    } catch (error) {
-        res.status(500).json({ error: error.message })
+exports.login = async (req, res) => {
+  try {
+    const { correo, password } = req.body; // correo = email del formulario
+
+    if (!correo || !password) {
+      return res.status(400).json({ message: 'Correo y contraseña son obligatorios' });
     }
-}
 
-const getUsuarioById = async (req, res) => {
-    try {
-        const { id } = req.params
-        const usuario = await usuarioService.getUsuarioById(id)
-        res.status(200).json(usuario)
-    } catch (error) {
-        res.status(500).json({ error: error.message })
+    const user = await usuarioService.findByEmail(correo);
+
+    if (!user) {
+      return res.status(401).json({ message: 'Credenciales inválidas' });
     }
-}
 
-module.exports = {
-    getUsuarios,
-    getUsuarioById
-}
+    if (user.password !== password) {
+      return res.status(401).json({ message: 'Credenciales inválidas' });
+    }
+
+    // No devolvemos la contraseña
+    res.json({
+      id: user.id,
+      nombre: user.nombre,
+      correo: user.correo,
+    });
+  } catch (err) {
+    console.error('Error en login:', err);
+    res.status(500).json({ message: 'Error en el servidor' });
+  }
+};
