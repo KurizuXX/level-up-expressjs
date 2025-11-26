@@ -20,62 +20,16 @@ const getUsuarios = async () => {
 // OBTENER USUARIO POR ID
 // =========================
 const getUsuarioById = async (id) => {
-  const { data, error } = await supabase
-    .from('usuarios')
-    .select('*')
-    .eq('id', id)
-    .single();
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return data; // un usuario o null
-};
-
-// =========================
-// BUSCAR USUARIO POR CORREO
-// (para login)
-// =========================
-const findByEmail = async (correo) => {
-  const { data, error } = await supabase
-    .from('usuarios')
-    .select('*')
-    .eq('correo', correo)
-    .single();
-
-  if (error) {
-    if (error.code === 'PGRST116' || error.details?.includes('Results contain 0 rows')) {
-      return null;
+    const { data, error } = await supabase
+        .from('usuarios')
+        .select('*')
+        .eq('id', id)
+        .single()
+    if (error) {
+        throw new Error(error.message)
     }
-    throw new Error(error.message);
-  }
-
-  return data; // usuario o null
-};
-
-// =========================
-// CREAR USUARIO (registro)
-// =========================
-const createUsuario = async ({ nombre, correo, password }) => {
-  const { data, error } = await supabase
-    .from('usuarios')
-    .insert([
-      {
-        nombre,
-        correo,
-        password,
-      },
-    ])
-    .select()
-    .single();
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return data; // usuario creado
-};
+    return data
+}
 
 module.exports = {
   getUsuarios,

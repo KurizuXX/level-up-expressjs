@@ -18,9 +18,15 @@ const getCategoryById = async (id) => {
         .select('*')
         .eq('id', id)
         .single()
+
+    if (!data) {
+        throw new Error('Categoría not found')
+    }
+
     if (error) {
         throw new Error(error.message)
     }
+
     return data
 }
 
